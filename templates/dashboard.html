@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Personal Planner</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome, {{ username }}!</h1>
+    
+    <div style="display: inline-block; vertical-align: top; margin-right: 20px;">
+        <h2>Your Assignments:</h2>
+        <ul>
+            {% for assignment in assignments %}
+                <li>
+                    <div style="display: inline-block;">
+                        {{ assignment[0] }} -- Deadline: {{ assignment[1] }}
+                    </div>
+                    <form action="{{ url_for('remove_assignment') }}" method="post" style="display: inline;">
+                        <input type="hidden" name="assignment_name" value="{{ assignment[0] }}">
+                        <button type="submit" onclick="return confirm('Are you sure you want to remove this assignment?')">Remove</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <div style="display: inline-block; vertical-align: top;">
+        <h2>Add New Assignment:</h2>
+        <form action="{{ url_for('add_assignment') }}" method="post">
+            <label for="assignment_name">Assignment Name:</label>
+            <input type="text" id="assignment_name" name="assignment_name" required><br>
+            <label for="deadline">Deadline:</label>
+            <input type="date" id="deadline" name="deadline" required><br>
+            <label for="assignment_name">Estimated Time for Completion (in hours):</label>
+            <input type="text" id="time_required" name="time_required" required><br>
+            <button type="submit">Add Assignment</button>
+        </form>
+    </div>
+    
+    <h2>Two-Week Calendar</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Monday</th>
+                <th>Tuesday</th>
+                <th>Wednesday</th>
+                <th>Thursday</th>
+                <th>Friday</th>
+                <th>Saturday</th>
+                <th>Sunday</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Example time slots -->
+            <tr>
+                <td>8:00 AM</td>
+                <td>Event 1</td>
+                <td>Event 2</td>
+                <td>Event 3</td>
+                <td></td>
+                <td>Event 4</td>
+                <td></td>
+                <td>Event 5</td>
+            </tr>
+            <tr>
+                <td>9:00 AM</td>
+                <!-- Add events for each day and time slot -->
+            </tr>
+            <!-- Add more rows for additional time slots -->
+        </tbody>
+    </table>   
+
+    <div style="display: inline-block; vertical-align: top; margin-right: 20px;">
+        <h2>Your Events:</h2>
+        <ul>
+            {% for event in events %}
+                <li>
+                    <div style="display: inline-block;">
+                            {{ event[0] }} -- Date: {{ event[1] }} {{ event[2] }}-{{ event[3] }} -- Weekly? {% if event[4] %} ✓ {% else %} ✗ {% endif %}
+                    </div>
+                    <form action="{{ url_for('remove_event') }}" method="post" style="display: inline;">
+                        <input type="hidden" name="event_name" value="{{ event[0] }}">
+                        <button type="submit" onclick="return confirm('Are you sure you want to remove this event?')">Remove</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <div style="display: inline-block; vertical-align: top;">
+        <h2>Add New Event:</h2>
+        <form action="{{ url_for('add_event') }}" method="post">
+            <label for="event_name">Event Name:</label>
+            <input type="text" id="event_name" name="event_name" required><br>
+            <label for="event_date">Date: (If weekly, choose first occurence)</label>
+            <input type="date" id="event_date" name="event_date" required><br>
+            <label for="start_time">Start Time:</label>
+            <input type="time" id="start_time" name="start_time" required><br>
+            <label for="end_time">End Time:</label>
+            <input type="time" id="end_time" name="end_time" required><br>
+            <label for="weekly">Weekly?</label>
+            <input type="checkbox" id="weekly" name="weekly" value="1"><br>
+            <label for="final_date">Final Date: (If event is weekly)</label>
+            <input type="date" id="final_date" name="final_date"><br>
+            <button type="submit">Add Event</button>
+        </form>
+    </div>
+    <br>
+
+    <div style="display: inline-block; vertical-align: top; margin-right: 20px;">
+        <h2>Your Classes/Weekly Meetings:</h2>
+        <ul>
+            {% for class in classes %}
+                <li>
+                    <div style="display: inline-block;">
+                            {{ class[0] }} -- Days: {% for day in class[1] %} {{ day }} {% endfor %} Time: {{ class[2] }} - {{ class[3] }}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <div style="display: inline-block; vertical-align: top;">
+        <h2>Add New Class/Weekly Meeting:</h2>
+        <form action="{{ url_for('add_class') }}" method="post">
+
+            <label for="event_name">Class/Weekly Meeting Name:</label>
+            <input type="text" id="class_name" name="class_name" required><br>
+
+            <label for="start_time">Start Time:</label>
+            <input type="time" id="start_time" name="start_time" required><br>
+
+            <label for="end_time">End Time:</label>
+            <input type="time" id="end_time" name="end_time" required><br>
+
+            <label for="day_of_week">Day(s) of the Week:</label>
+            <select id="day_of_week" name="day_of_week" multiple size="7">
+                <option value="monday">Monday</option>
+                <option value="tuesday">Tuesday</option>
+                <option value="wednesday">Wednesday</option>
+                <option value="thursday">Thursday</option>
+                <option value="friday">Friday</option>
+                <option value="saturday">Saturday</option>
+                <option value="sunday">Sunday</option>
+            </select><br>
+
+            <label for="final_date">Final Date: (Not Required)</label>
+            <input type="date" id="final_date" name="final_date"><br>
+
+            <button type="submit">Add Event</button>
+        </form>
+    </div>
+
+
+    <br>
+    <form action="{{ url_for('logout') }}" method="post">
+        <button type="submit">Logout</button>
+    </form>
+</body>
+</html>
+
